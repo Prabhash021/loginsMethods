@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">loginsMethods</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="client_id">354066106027-3q5u1b76eqtebjf7go5r0kp9gpk3r17s.apps.googleusercontent.com</string>
+    <string name="logout">Logout</string>
+    <string name="signup">SignUp</string>
+</resources>

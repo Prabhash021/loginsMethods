@@ -5,7 +5,6 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -22,7 +21,6 @@ import android.widget.Toast;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.auth.api.identity.SignInClient;
-import com.google.android.gms.auth.api.identity.SignInCredential;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -42,15 +40,16 @@ public class Login extends AppCompatActivity {
 
     FirebaseAuth auth;
     GoogleSignInClient googleSignInClient;
-    EditText emailTxt, paswdTxt;
+    EditText emailTxt, paswrdTxt;
     Button loginBtn;
     ProgressBar loading;
     SignInButton signIn;
     TextView signUp;
     SignInClient oneTapClient;
     BeginSignInRequest signInRequest;
-    private static final int REQ_ONE_TAP = 2;  // Can be any integer unique to the Activity.
-    private boolean showOneTapUI = true;
+
+    /*private static final int REQ_ONE_TAP = 2;  // Can be any integer unique to the Activity.
+    private boolean showOneTapUI = true;*/
 
     /*protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -123,7 +122,7 @@ public class Login extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         emailTxt = findViewById(R.id.txtEmail);
-        paswdTxt = findViewById(R.id.txtPassword);
+        paswrdTxt = findViewById(R.id.txtPassword);
         loading = findViewById(R.id.progress);
         loginBtn = findViewById(R.id.btnLogin);
         signIn = findViewById(R.id.googleBtn);
@@ -136,17 +135,17 @@ public class Login extends AppCompatActivity {
                 .requestEmail()
                 .build();
 
-        GetGoogleIdOption getGoogleIdOption = new GetGoogleIdOption.Builder()
+        /*GetGoogleIdOption getGoogleIdOption = new GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(true)
                 .setServerClientId(String.valueOf(R.string.client_id))
                 .setAutoSelectEnabled(true)
-                .build();
+                .build();*/
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             GetCredentialRequest request = new GetCredentialRequest.Builder()
                     .addCredentialOption(getGoogleIdOption)
                     .build();
-        }
+        }*/
 
         oneTapClient = Identity.getSignInClient(this);
         signInRequest = BeginSignInRequest.builder()
@@ -186,7 +185,7 @@ public class Login extends AppCompatActivity {
                 loading.setVisibility(View.VISIBLE);
 
                 String email = String.valueOf(emailTxt.getText());
-                String paswd = String.valueOf(paswdTxt.getText());
+                String paswd = String.valueOf(paswrdTxt.getText());
 
                 if(TextUtils.isEmpty(email)){
                     toast("Enter email.");

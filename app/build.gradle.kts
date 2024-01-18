@@ -56,4 +56,8 @@ dependencies {
 
     // For one-tap-google-login
     implementation ("com.google.android.libraries.identity.googleid:googleid:1.1.0")
+
+    //For Glider
+    implementation ("com.github.bumptech.glide:glide:4.11.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.11.0")
 }

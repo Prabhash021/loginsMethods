@@ -147,7 +147,7 @@ public class Login extends AppCompatActivity {
                     .build();
         }*/
 
-        oneTapClient = Identity.getSignInClient(this);
+        /*oneTapClient = Identity.getSignInClient(this);
         signInRequest = BeginSignInRequest.builder()
                 .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                         .setSupported(true)
@@ -158,7 +158,7 @@ public class Login extends AppCompatActivity {
                         .build())
                 // Automatically sign in when exactly one credential is retrieved.
                 .setAutoSelectEnabled(true)
-                .build();
+                .build();*/
 
         googleSignInClient = GoogleSignIn.getClient(Login.this, options);
 
@@ -185,17 +185,17 @@ public class Login extends AppCompatActivity {
                 loading.setVisibility(View.VISIBLE);
 
                 String email = String.valueOf(emailTxt.getText());
-                String paswd = String.valueOf(paswrdTxt.getText());
+                String paswrd = String.valueOf(paswrdTxt.getText());
 
                 if(TextUtils.isEmpty(email)){
                     toast("Enter email.");
                     return;
                 }
-                if(TextUtils.isEmpty(paswd)){
+                if(TextUtils.isEmpty(paswrd)){
                     toast("Enter password");
                     return;
                 }
-                auth.signInWithEmailAndPassword(email, paswd)
+                auth.signInWithEmailAndPassword(email, paswrd)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {

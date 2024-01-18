@@ -6,4 +6,8 @@
     <string name="client_id">354066106027-3q5u1b76eqtebjf7go5r0kp9gpk3r17s.apps.googleusercontent.com</string>
     <string name="logout">Logout</string>
     <string name="signup">SignUp</string>
+    <string name="username">Username</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="userid">UserId</string>
+    <string name="phone_login">Phone Login</string>
 </resources>

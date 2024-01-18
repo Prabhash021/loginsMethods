@@ -41,7 +41,7 @@ public class Login extends AppCompatActivity {
     FirebaseAuth auth;
     GoogleSignInClient googleSignInClient;
     EditText emailTxt, paswrdTxt;
-    Button loginBtn;
+    Button loginBtn, phoneLoginBtn;
     ProgressBar loading;
     SignInButton signIn;
     TextView signUp;
@@ -127,6 +127,7 @@ public class Login extends AppCompatActivity {
         loginBtn = findViewById(R.id.btnLogin);
         signIn = findViewById(R.id.googleBtn);
         signUp = findViewById(R.id.signUp);
+        phoneLoginBtn = findViewById(R.id.phoneLoginBtn);
 
         FirebaseApp.initializeApp(this);
 
@@ -168,6 +169,14 @@ public class Login extends AppCompatActivity {
                 // launching the activityResult for signing through google
                 Intent intent = googleSignInClient.getSignInIntent();
                 activityResultLauncher.launch(intent);
+            }
+        });
+
+        phoneLoginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Login.this, PhoneOtp.class);
+                startActivity(intent);
             }
         });
 

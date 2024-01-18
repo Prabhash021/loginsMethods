@@ -10,4 +10,7 @@
     <string name="phone_number">Phone Number</string>
     <string name="userid">UserId</string>
     <string name="phone_login">Phone Login</string>
+    <string name="enterotp">EnterOtp</string>
+    <string name="send_otp">Send Otp</string>
+    <string name="resend_otp">Resend Otp</string>
 </resources>

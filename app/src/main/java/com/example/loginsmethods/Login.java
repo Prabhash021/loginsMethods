@@ -41,6 +41,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.Objects;
+
 public class Login extends AppCompatActivity {
 
     FirebaseAuth auth;
@@ -51,10 +53,42 @@ public class Login extends AppCompatActivity {
     SignInButton signIn;
     TextView signUp;
     SignInClient oneTapClient;
-    BeginSignInRequest signInRequest;
+    BeginSignInRequest signUpRequest;
 
-    private final ActivityResultLauncher<Intent> activityResultLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    ActivityResultLauncher<IntentSenderRequest> activityResult =
+            registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if(result.getResultCode() == Activity.RESULT_OK){
+                        try {
+                            SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(result.getData());
+                            String idToken = credential.getGoogleIdToken();
+
+                            if (idToken !=  null) {
+                                AuthCredential signInAccount = GoogleAuthProvider.getCredential(credential.getGoogleIdToken(), null);
+                                auth.signInWithCredential(signInAccount).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if(task.isSuccessful()){
+                                            auth = FirebaseAuth.getInstance();
+                                            toast("Login successful");
+                                            Intent intent = new Intent(Login.this, MainActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }else {
+                                            toast("Login Failed");
+                                        }
+                                    }
+                                });
+                            }
+                        } catch (ApiException e) {
+                            e.printStackTrace();
+                            // ...
+                        }
+                    }
+                }
+            });
+    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if(result.getResultCode()== RESULT_OK){
@@ -83,40 +117,6 @@ public class Login extends AppCompatActivity {
         }
     });
 
-    ActivityResultLauncher<IntentSenderRequest> activityResult =
-            registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if(result.getResultCode() == Activity.RESULT_OK){
-                try {
-                    SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(result.getData());
-                    String idToken = credential.getGoogleIdToken();
-
-                    if (idToken !=  null) {
-                        AuthCredential signInAccount = GoogleAuthProvider.getCredential(credential.getGoogleIdToken(), null);
-                        auth.signInWithCredential(signInAccount).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful()){
-                                    auth = FirebaseAuth.getInstance();
-                                    toast("Login successful");
-                                    Intent intent = new Intent(Login.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                }else {
-                                    toast("Login Failed");
-                                }
-                            }
-                        });
-                    }
-                } catch (ApiException e) {
-                    e.printStackTrace();
-                    // ...
-                }
-            }
-        }
-    });
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,15 +140,16 @@ public class Login extends AppCompatActivity {
                 .build();
 
         oneTapClient = Identity.getSignInClient(this);
-        signInRequest = BeginSignInRequest.builder()
+        signUpRequest = BeginSignInRequest.builder()
+                .setPasswordRequestOptions(BeginSignInRequest.PasswordRequestOptions.builder()
+                        .setSupported(true)
+                        .build())
                 .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                         .setSupported(true)
                         .setServerClientId(getString(R.string.client_id))
-                        // Only show accounts previously used to sign in.
                         .setFilterByAuthorizedAccounts(true)
                         .build())
-                // Automatically sign in when exactly one credential is retrieved.
-                .setAutoSelectEnabled(true)
+                .setAutoSelectEnabled(false)
                 .build();
 
         googleSignInClient = GoogleSignIn.getClient(Login.this, options);
@@ -187,12 +188,12 @@ public class Login extends AppCompatActivity {
                 String email = String.valueOf(emailTxt.getText());
                 String paswrd = String.valueOf(paswrdTxt.getText());
 
-                if(TextUtils.isEmpty(email)){
+                if (TextUtils.isEmpty(email)) {
                     loading.setVisibility(View.GONE);
                     toast("Enter email.");
                     return;
                 }
-                if(TextUtils.isEmpty(paswrd)){
+                if (TextUtils.isEmpty(paswrd)) {
                     loading.setVisibility(View.GONE);
                     toast("Enter password");
                     return;
@@ -217,7 +218,7 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        if(auth.getCurrentUser()!=null){
+        if (auth.getCurrentUser() != null) {
             Intent intent = new Intent(Login.this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -231,7 +232,7 @@ public class Login extends AppCompatActivity {
     }
 
     private void OneTapGoogle(){
-        oneTapClient.beginSignIn(signInRequest)
+        oneTapClient.beginSignIn(signUpRequest)
                 .addOnSuccessListener(Login.this, new OnSuccessListener<BeginSignInResult>() {
                     @Override
                     public void onSuccess(BeginSignInResult result) {
@@ -242,7 +243,8 @@ public class Login extends AppCompatActivity {
                 .addOnFailureListener(Login.this, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        toast("Login Failed");
+                        toast("On-TapLogin load Failed");
+                        Log.e("Login", Objects.requireNonNull(e.getLocalizedMessage()));
                     }
                 });
     }
